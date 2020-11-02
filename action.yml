@@ -1,0 +1,8 @@
+name: BS Ranked Playlist
+description: Generate Beat Saber Ranked Playlists
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - --output-dir=/github/workspace
+    - --image-dir=/app/images

@@ -1,0 +1,43 @@
+name: Generate Playlist
+on:
+  schedule:
+  - cron: '0 */2 * * *'
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build playlist
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Generate Playlist
+      run: |
+        mkdir dist
+        go run main.go
+    - name: Release
+      run: |
+        set -x
+        cd dist
+        zip -r ranked_all.zip ./*.json
+        assets=()
+        for asset in ./*.json; do
+          assets+=("-a" "$asset")
+        done
+        assets+=("-a" "ranked_all.zip")
+        tag_name=`date '+%Y%m%d%H%M'`
+        hub release create "${assets[@]}" -m "Latest" "$tag_name"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Cleanup
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+      with:
+        keep_latest: 1
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
