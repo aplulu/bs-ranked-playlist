@@ -1,18 +1,18 @@
 # BS-Ranked-Playlist
 
-Beat Saber用ランク譜面の難易度別プレイリストです。
+Beat Saber用ランク譜面の難易度別及びPP別のプレイリストです。
 
 2時間毎に自動的に更新されます。
 
 ---
 
-Playlist of ranked scores for Beat Saber by difficulty level.
+Playlist of ranked scores for Beat Saber by difficulty level and performance point.
 
 This playlist is automatically updated every two hours.
 
 ## ダウンロード / Download
 
-https://github.com/aplulu/bs-ranked-playlist/releases/latest/download/ranked_all.zip
+ * [ranked_all.zip (全部入り/All Playlists)](https://github.com/aplulu/bs-ranked-playlist/releases/latest/download/ranked_all.zip)
 
 ## 使い方 / Usage
 

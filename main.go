@@ -63,9 +63,15 @@ func main() {
 	flag.StringVar(&outputDir, "output-dir", "dist", "Output Directory")
 	flag.Parse()
 
-	entries, err := GetRankedList()
+	entries, err := downloadRankedList()
 	if err != nil {
 		panic(err)
+	}
+
+	pps := []float64{200, 300, 400, 500}
+	hashByPP := make(map[float64][]string)
+	for _, pp := range pps {
+		hashByPP[pp] = make([]string, 0)
 	}
 
 	hashByStar := make(map[int][]string)
@@ -78,40 +84,45 @@ func main() {
 			}
 			hashByStar[star] = append(hashByStar[star], hash)
 		}
+
+		for _, pp := range pps {
+			for _, diff := range entry.Diffs {
+				if diff.Pp >= pp {
+					hashByPP[pp] = append(hashByPP[pp], hash)
+					break
+				}
+			}
+		}
 	}
 
+	// by star
 	for star, hashes := range hashByStar {
 		image, err := getImageByStar(imageDir, star)
 		if err != nil {
 			panic(err)
 		}
 
-		playlist := Playlist{
-			Title:       fmt.Sprintf("Ranked Songs ★%d", star),
-			Author:      "",
-			Description: "",
-			Image:       image,
-			Songs:       make([]PlaylistSong, 0, len(hashes)),
+		of := fmt.Sprintf("%s/ranked_star_%02d.json", outputDir, star)
+		if err := writePlaylist(of, fmt.Sprintf("Ranked Songs ★%d", star), "", image, hashes); err != nil {
+			panic(err)
 		}
+	}
 
-		for _, hash := range hashes {
-			playlist.Songs = append(playlist.Songs, PlaylistSong{Hash: hash})
-		}
-
-		b, err := json.Marshal(playlist)
+	// by performance point
+	for pp, hashes := range hashByPP {
+		image, err := getImageByPP(imageDir, int(pp))
 		if err != nil {
 			panic(err)
 		}
 
-		of := fmt.Sprintf("%s/ranked_%02d.json", outputDir, star)
-		log.Printf("Writing %s...\n", of)
-		if err := ioutil.WriteFile(of, b, 0644); err != nil {
+		of := fmt.Sprintf("%s/ranked_pp_%02d.json", outputDir, int(pp))
+		if err := writePlaylist(of, fmt.Sprintf("Ranked Songs %dpp+", int(pp)), "", image, hashes); err != nil {
 			panic(err)
 		}
 	}
 }
 
-func GetRankedList() (map[string]RankedEntry, error) {
+func downloadRankedList() (map[string]RankedEntry, error) {
 	log.Printf("Downloading %s...\n", RANKED_URL)
 	req, err := http.NewRequest("GET", RANKED_URL, nil)
 	if err != nil {
@@ -160,4 +171,53 @@ func getImageByStar(imageDir string, star int) (string, error) {
 	}
 
 	return "", nil
+}
+
+func getImageByPP(imageDir string, pp int) (string, error) {
+	imageFile := fmt.Sprintf("%s/pp_%d.png", imageDir, pp)
+	if _, err := os.Stat(imageFile); err == nil {
+		b, err := ioutil.ReadFile(imageFile)
+		if err != nil {
+			return "", err
+		}
+
+		return "data:image/png;base64," + base64.StdEncoding.EncodeToString(b), nil
+	} else {
+		imageFile = imageDir + "/n.png"
+		if _, err := os.Stat(imageFile); err == nil {
+			b, err := ioutil.ReadFile(imageFile)
+			if err != nil {
+				return "", err
+			}
+
+			return "data:image/png;base64," + base64.StdEncoding.EncodeToString(b), nil
+		}
+	}
+
+	return "", nil
+}
+
+func writePlaylist(fileName string, title string, description string, image string, hashes []string) error {
+	playlist := Playlist{
+		Title:       title,
+		Author:      "",
+		Description: description,
+		Image:       image,
+		Songs:       make([]PlaylistSong, 0, len(hashes)),
+	}
+
+	for _, hash := range hashes {
+		playlist.Songs = append(playlist.Songs, PlaylistSong{Hash: hash})
+	}
+
+	b, err := json.Marshal(playlist)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Writing %s...\n", fileName)
+	if err := ioutil.WriteFile(fileName, b, 0644); err != nil {
+		return err
+	}
+	return nil
 }
