@@ -69,26 +69,26 @@ func main() {
 	}
 
 	pps := []float64{200, 300, 400, 500}
-	hashByPP := make(map[float64][]string)
+	hashByPP := make(map[float64]map[string]struct{})
 	for _, pp := range pps {
-		hashByPP[pp] = make([]string, 0)
+		hashByPP[pp] = make(map[string]struct{}, 0)
 	}
 
-	hashByStar := make(map[int][]string)
+	hashByStar := make(map[int]map[string]struct{})
 	for hash, entry := range entries {
 		for _, diff := range entry.Diffs {
 			star := int(math.Trunc(diff.Star))
 
 			if _, ok := hashByStar[star]; !ok {
-				hashByStar[star] = make([]string, 0)
+				hashByStar[star] = make(map[string]struct{}, 0)
 			}
-			hashByStar[star] = append(hashByStar[star], hash)
+			hashByStar[star][hash] = struct{}{}
 		}
 
 		for _, pp := range pps {
 			for _, diff := range entry.Diffs {
 				if diff.Pp >= pp {
-					hashByPP[pp] = append(hashByPP[pp], hash)
+					hashByPP[pp][hash] = struct{}{}
 					break
 				}
 			}
@@ -96,10 +96,15 @@ func main() {
 	}
 
 	// by star
-	for star, hashes := range hashByStar {
+	for star, hashMap := range hashByStar {
 		image, err := getImageByStar(imageDir, star)
 		if err != nil {
 			panic(err)
+		}
+
+		hashes := make([]string, 0)
+		for h := range hashMap {
+			hashes = append(hashes, h)
 		}
 
 		of := fmt.Sprintf("%s/ranked_star_%02d.json", outputDir, star)
@@ -109,10 +114,15 @@ func main() {
 	}
 
 	// by performance point
-	for pp, hashes := range hashByPP {
+	for pp, hashMap := range hashByPP {
 		image, err := getImageByPP(imageDir, int(pp))
 		if err != nil {
 			panic(err)
+		}
+
+		hashes := make([]string, 0)
+		for h := range hashMap {
+			hashes = append(hashes, h)
 		}
 
 		of := fmt.Sprintf("%s/ranked_pp_%02d.json", outputDir, int(pp))
