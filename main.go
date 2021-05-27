@@ -63,6 +63,14 @@ func main() {
 	flag.StringVar(&outputDir, "output-dir", "dist", "Output Directory")
 	flag.Parse()
 
+	if _, err := os.Stat(outputDir); err != nil {
+		if err := os.MkdirAll(outputDir, 0755); err != nil {
+			fmt.Fprintf(os.Stderr, "failed to create output directory: %v", err)
+			os.Exit(1)
+			return
+		}
+	}
+
 	entries, err := downloadRankedList()
 	if err != nil {
 		panic(err)
