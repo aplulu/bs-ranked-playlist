@@ -1,6 +1,7 @@
 package main
 
 import (
+	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
 	"flag"
@@ -13,7 +14,7 @@ import (
 )
 
 const (
-	RANKED_URL = "https://cdn.wes.cloud/beatstar/bssb/v2-ranked.json"
+	RANKED_URL = "https://cdn.wes.cloud/beatstar/bssb/v2-all.json.gz"
 )
 
 type RankedEntry struct {
@@ -43,7 +44,7 @@ type Playlist struct {
 	Title       string         `json:"playlistTitle"`
 	Author      string         `json:"playlistAuthor"`
 	Description string         `json:"playlistDescription"`
-	Songs       []PlaylistSong `json:"songs"`
+	Songs       []*PlaylistSong `json:"songs"`
 	Image       string         `json:"image,omitempty"`
 }
 
@@ -51,6 +52,12 @@ type PlaylistSong struct {
 	SongName        string `json:"songName,omitempty"`
 	LevelAuthorName string `json:"levelAuthorName,omitempty"`
 	Hash            string `json:"hash"`
+	Difficulties    []*PlaylistSongDifficulty `json:"difficulties"`
+}
+
+type PlaylistSongDifficulty struct {
+	Characteristic string `json:"characteristic"`
+	Name           string `json:"name"`
 }
 
 func main() {
@@ -71,32 +78,80 @@ func main() {
 		}
 	}
 
+	characteristicNames := []string{"Unknown", "Standard", "OneSaber", "NoArrows", "Lightshow", "Degree90", "Degree360", "Lawless"}
+
 	entries, err := downloadRankedList()
 	if err != nil {
 		panic(err)
 	}
 
 	pps := []float64{200, 300, 400, 500}
-	hashByPP := make(map[float64]map[string]struct{})
+	songByPP := make(map[float64]map[string]*PlaylistSong)
 	for _, pp := range pps {
-		hashByPP[pp] = make(map[string]struct{}, 0)
+		songByPP[pp] = make(map[string]*PlaylistSong, 0)
 	}
 
-	hashByStar := make(map[int]map[string]struct{})
+	songByStar := make(map[int]map[string]*PlaylistSong)
 	for hash, entry := range entries {
 		for _, diff := range entry.Diffs {
+			if diff.Star == 0 {
+				continue
+			}
 			star := int(math.Trunc(diff.Star))
 
-			if _, ok := hashByStar[star]; !ok {
-				hashByStar[star] = make(map[string]struct{}, 0)
+			if _, ok := songByStar[star]; !ok {
+				songByStar[star] = make(map[string]*PlaylistSong, 0)
 			}
-			hashByStar[star][hash] = struct{}{}
+			song, ok := songByStar[star][hash]
+			if !ok {
+				song = &PlaylistSong{
+					Hash:         hash,
+					Difficulties: make([]*PlaylistSongDifficulty, 0),
+				}
+				songByStar[star][hash] = song
+			}
+
+			if diff.Type > len(characteristicNames) -1 {
+				continue
+			}
+
+			characteristicName := characteristicNames[diff.Type]
+			diffName := diff.Diff
+			if diffName == "Expert+" {
+				diffName = "ExpertPlus"
+			}
+			song.Difficulties = append(song.Difficulties, &PlaylistSongDifficulty{
+				Characteristic: characteristicName,
+				Name:           diffName,
+			})
 		}
 
 		for _, pp := range pps {
 			for _, diff := range entry.Diffs {
 				if diff.Pp >= pp {
-					hashByPP[pp][hash] = struct{}{}
+					song, ok := songByPP[pp][hash]
+					if !ok {
+						song = &PlaylistSong{
+							Hash:         hash,
+							Difficulties: make([]*PlaylistSongDifficulty, 0),
+						}
+						songByPP[pp][hash] = song
+					}
+
+					if diff.Type > len(characteristicNames) -1 {
+						continue
+					}
+
+					characteristicName := characteristicNames[diff.Type]
+					diffName := diff.Diff
+					if diffName == "Expert+" {
+						diffName = "ExpertPlus"
+					}
+					song.Difficulties = append(song.Difficulties, &PlaylistSongDifficulty{
+						Characteristic: characteristicName,
+						Name:           diffName,
+					})
+
 					break
 				}
 			}
@@ -104,37 +159,37 @@ func main() {
 	}
 
 	// by star
-	for star, hashMap := range hashByStar {
+	for star, songMap := range songByStar {
 		image, err := getImageByStar(imageDir, star)
 		if err != nil {
 			panic(err)
 		}
 
-		hashes := make([]string, 0)
-		for h := range hashMap {
-			hashes = append(hashes, h)
+		songs := make([]*PlaylistSong, 0)
+		for _, s := range songMap {
+			songs = append(songs, s)
 		}
 
 		of := fmt.Sprintf("%s/ranked_star_%02d.json", outputDir, star)
-		if err := writePlaylist(of, fmt.Sprintf("Ranked Songs ★%d", star), "", image, hashes); err != nil {
+		if err := writePlaylist(of, fmt.Sprintf("Ranked Songs ★%d", star), "", image, songs); err != nil {
 			panic(err)
 		}
 	}
 
 	// by performance point
-	for pp, hashMap := range hashByPP {
+	for pp, songMap := range songByPP {
 		image, err := getImageByPP(imageDir, int(pp))
 		if err != nil {
 			panic(err)
 		}
 
-		hashes := make([]string, 0)
-		for h := range hashMap {
-			hashes = append(hashes, h)
+		songs := make([]*PlaylistSong, 0)
+		for _, s := range songMap {
+			songs = append(songs, s)
 		}
 
 		of := fmt.Sprintf("%s/ranked_pp_%02d.json", outputDir, int(pp))
-		if err := writePlaylist(of, fmt.Sprintf("Ranked Songs %dpp+", int(pp)), "", image, hashes); err != nil {
+		if err := writePlaylist(of, fmt.Sprintf("Ranked Songs %dpp+", int(pp)), "", image, songs); err != nil {
 			panic(err)
 		}
 	}
@@ -157,8 +212,13 @@ func downloadRankedList() (map[string]RankedEntry, error) {
 		return nil, fmt.Errorf("got response code %d: %w", resp.StatusCode, err)
 	}
 
+	reader, err := gzip.NewReader(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
 	var entries map[string]RankedEntry
-	if err := json.NewDecoder(resp.Body).Decode(&entries); err != nil {
+	if err := json.NewDecoder(reader).Decode(&entries); err != nil {
 		return nil, err
 	}
 
@@ -215,17 +275,13 @@ func getImageByPP(imageDir string, pp int) (string, error) {
 	return "", nil
 }
 
-func writePlaylist(fileName string, title string, description string, image string, hashes []string) error {
+func writePlaylist(fileName string, title string, description string, image string, songs []*PlaylistSong) error {
 	playlist := Playlist{
 		Title:       title,
 		Author:      "",
 		Description: description,
 		Image:       image,
-		Songs:       make([]PlaylistSong, 0, len(hashes)),
-	}
-
-	for _, hash := range hashes {
-		playlist.Songs = append(playlist.Songs, PlaylistSong{Hash: hash})
+		Songs:       songs,
 	}
 
 	b, err := json.Marshal(playlist)
@@ -233,7 +289,7 @@ func writePlaylist(fileName string, title string, description string, image stri
 		return err
 	}
 
-	log.Printf("Writing %s...\n", fileName)
+	log.Printf( "Writing %s... (%d songs)\n", fileName, len(songs))
 	if err := ioutil.WriteFile(fileName, b, 0644); err != nil {
 		return err
 	}
