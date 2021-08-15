@@ -3,13 +3,15 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 [![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Faplulu%2Franked-playlist-generator)](https://twitter.com/intent/tweet?text=BSRankedPlaylist&url=https%3A%2F%2Fgithub.com%2Faplulu%2Fbs-ranked-playlist)
 
+* Other languages: [English](README.md), [日本語](README.ja.md)
+
 Playlist of ranked scores for Beat Saber by difficulty level and performance point.
 
 This playlist is automatically updated every two hours.
 
 ## Download
 
- * [ranked_all.zip (全部入り/All Playlists)](https://github.com/aplulu/bs-ranked-playlist/releases/latest/download/ranked_all.zip)
+ * [ranked_all.zip (All Playlists)](https://github.com/aplulu/bs-ranked-playlist/releases/latest/download/ranked_all.zip)
 
 ## Usage
 
