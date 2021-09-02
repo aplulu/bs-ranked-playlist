@@ -14,20 +14,17 @@
             var url = 'https://api.github.com/repos/DetegiCE/bs-ranked-playlist/releases';
             $.getJSON(url, function(data) {
                 tag_name = data[0].tag_name;
-
                 var rellnk = 'https://github.com/DetegiCE/bs-ranked-playlist/releases/download/'+tag_name+'/';
                 var pp200 = document.getElementById("pp200");
                 var pp300 = document.getElementById("pp300");
                 var pp400 = document.getElementById("pp400");
                 var pp500 = document.getElementById("pp500");
                 pp200.setAttribute("onclick", "location.href='"+rellnk+"ranked_pp_200.json'");
-                pp200.setAttribute("onclick", "location.href='"+rellnk+"ranked_pp_300.json'");
-                pp200.setAttribute("onclick", "location.href='"+rellnk+"ranked_pp_400.json'");
-                pp200.setAttribute("onclick", "location.href='"+rellnk+"ranked_pp_500.json'");
+                pp300.setAttribute("onclick", "location.href='"+rellnk+"ranked_pp_300.json'");
+                pp400.setAttribute("onclick", "location.href='"+rellnk+"ranked_pp_400.json'");
+                pp500.setAttribute("onclick", "location.href='"+rellnk+"ranked_pp_500.json'");
             });
-
         }
-
     </script>
 </head>
 <body>
