@@ -23,10 +23,11 @@
                     var rankElem = document.getElementById(types[i]);
                     rankElem.setAttribute("onclick", "location.href='"+rellnk+"ranked_"+types[i]+".json'");
                 }
+
+                var recdate = document.getElementById("recdate");
+                var updatedate = "Recent Updated: " + tag_name.substr(0, 4) + "년 " + tag_name.substr(4, 2) + "월 " + tag_name.substr(6, 2) + "일 " + tag_name.substr(8, 2) + "시 " + tag_name.substr(10, 2) + "분 (UTC)"
+                recdate.innerText = updatedate;
             });
-            var recdate = document.getElementById("recdate");
-            var updatedate = "Recent Updated: " + tag_name.substr(0, 4) + "년 " + tag_name.substr(4, 2) + "월 " + tag_name.substr(6, 2) + "일 " + tag_name.substr(8, 2) + "시 " + tag_name.substr(10, 2) + "분 (UTC)"
-            recdate.innerText = updatedate;
 
             var fetchinfo = document.getElementById("getInfo");
             var fetchcomp = '<div class="alert alert-success" role="alert">성공적으로 정보를 가져왔습니다. 이제 다운로드가 가능합니다.</div>';
