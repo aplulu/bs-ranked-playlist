@@ -30,7 +30,7 @@
             });
 
             var fetchinfo = document.getElementById("getInfo");
-            var fetchcomp = '<div class="alert alert-success" role="alert">성공적으로 정보를 가져왔습니다. 이제 다운로드가 가능합니다.</div>';
+            var fetchcomp = '<div class="dwnBtn alert alert-success" role="alert">Data Succesfully Fetched.</div>';
             fetchinfo.innerHTML = fetchcomp;
         }
     </script>
@@ -65,6 +65,15 @@
 
         body {
             background-color: #010a01;
+            font-family: 'Teko', serif;
+        }
+
+        .rankbar {
+            margin-top: 0.5rem;
+        }
+
+        .creditbar {
+            margin-top: 5rem;
         }
 
         .mainTitle {
@@ -72,12 +81,19 @@
         }
 
         .dwnBtn {
+            margin-left: 0.5rem;
+            margin-down: 0.5rem;
             font-family: 'Teko', serif;
             font-size: 1.3rem;
         }
 
         .neonFont {
             font-family: 'NeonTubes2', serif;
+        }
+
+        .creditText {
+            color: white;
+            font-size: 1.3rem;
         }
 
         .tekoFont {
@@ -119,30 +135,42 @@
                 0 0 20px orange,
                 0 0 30px orange;
         }
+
+        .leftMargin {
+            margin-left: 10px;
+        }
+
+        .rightMargin {
+            margin-right: 10px;
+        }
+
+        .topMargin {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
 <!-- BEGIN 컨텐츠 -->
-<h1 class="mainTitle neonFont neonRed">Beat</h1>
-<h1 class="mainTitle neonFont neonBlue">Saber</h1>
+<h1 class="mainTitle neonFont neonRed leftMargin topMargin">Beat</h1>
+<h1 class="mainTitle neonFont neonBlue rightMargin">Saber</h1>
 <br>
-<h1 class="mainTitle neonFont neonYellow">Ranked Playlist</h1>
+<h1 class="mainTitle neonFont neonYellow leftMargin">Ranked Playlist</h1>
 
 <div id="getInfo">
     <div class="alert alert-warning" role="alert">
-        정보를 가져오는 중입니다. 잠시만 기다려주세요.
+        Data Fetching. Please Wait.
     </div>
 </div>
 
 <div id="recdate"></div>
 
-<h2 class="tekoFont">Ranked By PP</h2>
+<h2 class="tekoFont rankbar">Ranked By PP</h2>
 <button type="button" class="dwnBtn btn btn-warning" id="pp_200">PP 200+</button>
 <button type="button" class="dwnBtn btn btn-success" id="pp_300">PP 300+</button>
 <button type="button" class="dwnBtn btn btn-info" id="pp_400">PP 400+</button>
 <button type="button" class="dwnBtn btn btn-danger" id="pp_500">PP 500+</button>
 
-<h2 class="tekoFont">Ranked by Star</h2>
+<h2 class="tekoFont rankbar">Ranked by Star</h2>
 <button type="button" class="dwnBtn btn btn-light" id="star_00">Star 00+</button>
 <button type="button" class="dwnBtn btn btn-light" id="star_01">Star 01+</button>
 <button type="button" class="dwnBtn btn btn-secondary" id="star_02">Star 02+</button>
@@ -158,6 +186,12 @@
 <button type="button" class="dwnBtn btn btn-danger" id="star_12">Star 12+</button>
 <button type="button" class="dwnBtn btn btn-danger" id="star_13">Star 13+</button>
 <button type="button" class="dwnBtn btn btn-dark" id="star_14">Star 14+</button>
+
+<h2 class="tekoFont creditbar">Credits</h2>
+<ul class="creditText">
+    <li>Playlist Autogenerate Code by <a href="https://github.com/aplulu/bs-ranked-playlist">aplulu</a></li>
+    <li>Download Site by <a href="https://scoresaber.com/u/76561198357821968">SUI Sensei</a></li>
+</ul>
 
 <!-- END 컨텐츠 -->
 </body>
