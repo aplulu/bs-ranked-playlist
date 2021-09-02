@@ -39,7 +39,8 @@
             font-family: 'NeonTubes2';
             font-style: normal;
             font-weight: normal;
-            src: url('fonts/NeonTubes2.otf') format("opentype");
+            src: url('fonts/neontubes2-webfont.woff2') format("woff2"),
+                 url('fonts/neontubes2-webfont.woff') format("woff");
         }
 
         @font-face {
@@ -49,54 +50,83 @@
             src: url('fonts/Teko-Regular.ttf') format("truetype");
         }
 
-        h1, h2 {
-            text-align: center;
-            font-weight: 400;
-        }
-
         h1 {
-            font-size: 4.2rem;
+            display: inline-block;
+            font-size: 2.2rem;
         }
 
         h2 {
-            font-size: 1.8rem;
+            text-align: center;
+            font-weight: 400;
+            font-size: 2.0rem;
+            color: white;
+            background: linear-gradient(to left, rgba(2, 180, 241, 0), rgba(2, 180, 241, 1));
+        }
+
+        body {
+            background-color: #010a01;
+        }
+
+        .mainTitle {
+            text-align: center;
+        }
+
+        .dwnBtn {
+            font-family: 'Teko', serif;
+            font-size: 1.3rem;
         }
 
         .neonFont {
             font-family: 'NeonTubes2', serif;
         }
 
+        .tekoFont {
+            font-family: 'Teko', serif;
+        }
+
         .neonRed {
             color: white;
             text-shadow:
-                0 0 7px white,
-                0 0 10px white,
-                0 0 21px white,
-                0 0 42px red,
-                0 0 82px red,
-                0 0 92px red,
-                0 0 102px red,
-                0 0 151px red;
+                0 0 5px red,
+                0 0 10px red,
+                0 0 20px red,
+                0 0 30px red;
         }
 
         .neonBlue {
             color: white;
             text-shadow:
-                0 0 7px white,
-                0 0 10px white,
-                0 0 21px white,
-                0 0 42px blue,
-                0 0 82px blue,
-                0 0 92px blue,
-                0 0 102px blue,
-                0 0 151px blue;
+                0 0 5px blue,
+                0 0 10px blue,
+                0 0 20px blue,
+                0 0 30px blue;
+        }
+
+        .neonYellow {
+            color: white;
+            text-shadow:
+                0 0 5px yellow,
+                0 0 10px yellow,
+                0 0 20px yellow,
+                0 0 30px yellow;
+        }
+
+        .neonOrange {
+            color: white;
+            text-shadow:
+                0 0 5px orange,
+                0 0 10px orange,
+                0 0 20px orange,
+                0 0 30px orange;
         }
     </style>
 </head>
 <body>
 <!-- BEGIN 컨텐츠 -->
-<h1 class="neon neonRed" style="display:inline">Beat</h1>
-<h1 class="neon neonBlue" style="display:inline">Saber</h1>Ranked Playlist
+<h1 class="mainTitle neonFont neonRed">Beat</h1>
+<h1 class="mainTitle neonFont neonBlue">Saber</h1>
+<br>
+<h1 class="mainTitle neonFont neonYellow">Ranked Playlist</h1>
 
 <div id="getInfo">
     <div class="alert alert-warning" role="alert">
@@ -106,28 +136,28 @@
 
 <div id="recdate"></div>
 
-<h2>Ranked By PP</h2>
-<button type="button" class="btn btn-warning" id="pp_200">PP 200+</button>
-<button type="button" class="btn btn-success" id="pp_300">PP 300+</button>
-<button type="button" class="btn btn-info" id="pp_400">PP 400+</button>
-<button type="button" class="btn btn-danger" id="pp_500">PP 500+</button>
+<h2 class="tekoFont">Ranked By PP</h2>
+<button type="button" class="dwnBtn btn btn-warning" id="pp_200">PP 200+</button>
+<button type="button" class="dwnBtn btn btn-success" id="pp_300">PP 300+</button>
+<button type="button" class="dwnBtn btn btn-info" id="pp_400">PP 400+</button>
+<button type="button" class="dwnBtn btn btn-danger" id="pp_500">PP 500+</button>
 
-<h2>Ranked by Star</h2>
-<button type="button" class="btn btn-light" id="star_00">Star 00+</button>
-<button type="button" class="btn btn-light" id="star_01">Star 01+</button>
-<button type="button" class="btn btn-secondary" id="star_02">Star 02+</button>
-<button type="button" class="btn btn-secondary" id="star_03">Star 03+</button>
-<button type="button" class="btn btn-warning" id="star_04">Star 04+</button>
-<button type="button" class="btn btn-warning" id="star_05">Star 05+</button>
-<button type="button" class="btn btn-success" id="star_06">Star 06+</button>
-<button type="button" class="btn btn-success" id="star_07">Star 07+</button>
-<button type="button" class="btn btn-info" id="star_08">Star 08+</button>
-<button type="button" class="btn btn-info" id="star_09">Star 09+</button>
-<button type="button" class="btn btn-primary" id="star_10">Star 10+</button>
-<button type="button" class="btn btn-primary" id="star_11">Star 11+</button>
-<button type="button" class="btn btn-danger" id="star_12">Star 12+</button>
-<button type="button" class="btn btn-danger" id="star_13">Star 13+</button>
-<button type="button" class="btn btn-dark" id="star_14">Star 14+</button>
+<h2 class="tekoFont">Ranked by Star</h2>
+<button type="button" class="dwnBtn btn btn-light" id="star_00">Star 00+</button>
+<button type="button" class="dwnBtn btn btn-light" id="star_01">Star 01+</button>
+<button type="button" class="dwnBtn btn btn-secondary" id="star_02">Star 02+</button>
+<button type="button" class="dwnBtn btn btn-secondary" id="star_03">Star 03+</button>
+<button type="button" class="dwnBtn btn btn-warning" id="star_04">Star 04+</button>
+<button type="button" class="dwnBtn btn btn-warning" id="star_05">Star 05+</button>
+<button type="button" class="dwnBtn btn btn-success" id="star_06">Star 06+</button>
+<button type="button" class="dwnBtn btn btn-success" id="star_07">Star 07+</button>
+<button type="button" class="dwnBtn btn btn-info" id="star_08">Star 08+</button>
+<button type="button" class="dwnBtn btn btn-info" id="star_09">Star 09+</button>
+<button type="button" class="dwnBtn btn btn-primary" id="star_10">Star 10+</button>
+<button type="button" class="dwnBtn btn btn-primary" id="star_11">Star 11+</button>
+<button type="button" class="dwnBtn btn btn-danger" id="star_12">Star 12+</button>
+<button type="button" class="dwnBtn btn btn-danger" id="star_13">Star 13+</button>
+<button type="button" class="dwnBtn btn btn-dark" id="star_14">Star 14+</button>
 
 <!-- END 컨텐츠 -->
 </body>
