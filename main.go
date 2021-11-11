@@ -15,6 +15,7 @@ import (
 
 const (
 	RANKED_URL = "https://cdn.wes.cloud/beatstar/bssb/v2-all.json.gz"
+	UPDATE_URL = "https://github.com/aplulu/bs-ranked-playlist/releases/latest/download/"
 )
 
 type RankedEntry struct {
@@ -44,6 +45,7 @@ type Playlist struct {
 	Title       string         `json:"playlistTitle"`
 	Author      string         `json:"playlistAuthor"`
 	Description string         `json:"playlistDescription"`
+	CustomData  map[string]string `json:"customData"`
 	Songs       []*PlaylistSong `json:"songs"`
 	Image       string         `json:"image,omitempty"`
 }
@@ -170,8 +172,8 @@ func main() {
 			songs = append(songs, s)
 		}
 
-		of := fmt.Sprintf("%s/ranked_star_%02d.json", outputDir, star)
-		if err := writePlaylist(of, fmt.Sprintf("Ranked Songs ★%d", star), "", image, songs); err != nil {
+		of := fmt.Sprintf("ranked_star_%02d.json", star)
+		if err := writePlaylist(outputDir, of, fmt.Sprintf("Ranked Songs ★%d", star), "", image, songs); err != nil {
 			panic(err)
 		}
 	}
@@ -188,8 +190,8 @@ func main() {
 			songs = append(songs, s)
 		}
 
-		of := fmt.Sprintf("%s/ranked_pp_%02d.json", outputDir, int(pp))
-		if err := writePlaylist(of, fmt.Sprintf("Ranked Songs %dpp+", int(pp)), "", image, songs); err != nil {
+		of := fmt.Sprintf("ranked_pp_%02d.json", int(pp))
+		if err := writePlaylist(outputDir, of, fmt.Sprintf("Ranked Songs %dpp+", int(pp)), "", image, songs); err != nil {
 			panic(err)
 		}
 	}
@@ -275,11 +277,16 @@ func getImageByPP(imageDir string, pp int) (string, error) {
 	return "", nil
 }
 
-func writePlaylist(fileName string, title string, description string, image string, songs []*PlaylistSong) error {
+func writePlaylist(fileDir string, fileName string, title string, description string, image string, songs []*PlaylistSong) error {
+	customData := map[string]string{
+		"syncURL": fmt.Sprintf("%s%s", UPDATE_URL, fileName),
+	}
+
 	playlist := Playlist{
 		Title:       title,
 		Author:      "",
 		Description: description,
+		CustomData:  customData,
 		Image:       image,
 		Songs:       songs,
 	}
@@ -289,8 +296,10 @@ func writePlaylist(fileName string, title string, description string, image stri
 		return err
 	}
 
-	log.Printf( "Writing %s... (%d songs)\n", fileName, len(songs))
-	if err := ioutil.WriteFile(fileName, b, 0644); err != nil {
+	outFile := fmt.Sprintf("%s/%s", fileDir, fileName);
+
+	log.Printf( "Writing %s... (%d songs)\n", outFile, len(songs))
+	if err := ioutil.WriteFile(outFile, b, 0644); err != nil {
 		return err
 	}
 	return nil
