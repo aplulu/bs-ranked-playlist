@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>BS Ranked Playlist</title>
+    <script>
+        var tag_name = '';
+        window.onload = function() {
+            var url = 'https://api.github.com/repos/DetegiCE/bs-ranked-playlist/releases';
+            var types = new Array("pp_200", "pp_300", "pp_400", "pp_500",
+                                  "star_00", "star_01", "star_02", "star_03", "star_04",
+                                  "star_05", "star_06", "star_07", "star_08", "star_09",
+                                  "star_10", "star_11", "star_12", "star_13", "star_14");
+            $.getJSON(url, function(data) {
+                tag_name = data[0].tag_name;
+                var rellnk = 'https://github.com/DetegiCE/bs-ranked-playlist/releases/download/'+tag_name+'/';
+                for(var i=0 ; i<=types.length ; i++) {
+                    var rankElem = document.getElementById(types[i]);
+                    rankElem.setAttribute("onclick", "location.href='"+rellnk+"ranked_"+types[i]+".json'");
+                }
+
+                var recdate = document.getElementById("recdate");
+                var updatedate = 'Recent Updated: ' + tag_name;
+                recdate.innerHTML = updatedate;
+            });
+
+            var fetchinfo = document.getElementById("getInfo");
+            var fetchcomp = '<div class="dwnBtn alert alert-success" role="alert">Data Succesfully Fetched.</div>';
+            fetchinfo.innerHTML = fetchcomp;
+        }
+    </script>
+    <style>
+        @font-face {
+            font-family: 'NeonTubes2';
+            font-style: normal;
+            font-weight: normal;
+            src: url('fonts/neontubes2-webfont.woff2') format("woff2"),
+                 url('fonts/neontubes2-webfont.woff') format("woff");
+        }
+
+        @font-face {
+            font-family: 'Teko';
+            font-style: normal;
+            font-weight: normal;
+            src: url('fonts/Teko-Regular.ttf') format("truetype");
+        }
+
+        h1 {
+            display: inline-block;
+            font-size: 2.2rem;
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 400;
+            font-size: 2.0rem;
+            color: white;
+            background: linear-gradient(to left, rgba(2, 180, 241, 0), rgba(2, 180, 241, 1));
+        }
+
+        body {
+            background-color: #010a01;
+            font-family: 'Teko', serif;
+        }
+
+        .rankbar {
+            margin-top: 0.5rem;
+        }
+
+        .creditbar {
+            margin-top: 5rem;
+        }
+
+        .mainTitle {
+            text-align: center;
+        }
+
+        .dwnBtn {
+            margin-left: 0.5rem;
+            margin-down: 0.5rem;
+            font-family: 'Teko', serif;
+            font-size: 1.3rem;
+        }
+
+        .neonFont {
+            font-family: 'NeonTubes2', serif;
+        }
+
+        .creditText {
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .tekoFont {
+            font-family: 'Teko', serif;
+        }
+
+        .neonRed {
+            color: white;
+            text-shadow:
+                0 0 5px red,
+                0 0 10px red,
+                0 0 20px red,
+                0 0 30px red;
+        }
+
+        .neonBlue {
+            color: white;
+            text-shadow:
+                0 0 5px blue,
+                0 0 10px blue,
+                0 0 20px blue,
+                0 0 30px blue;
+        }
+
+        .neonYellow {
+            color: white;
+            text-shadow:
+                0 0 5px yellow,
+                0 0 10px yellow,
+                0 0 20px yellow,
+                0 0 30px yellow;
+        }
+
+        .neonOrange {
+            color: white;
+            text-shadow:
+                0 0 5px orange,
+                0 0 10px orange,
+                0 0 20px orange,
+                0 0 30px orange;
+        }
+
+        .leftMargin {
+            margin-left: 10px;
+        }
+
+        .rightMargin {
+            margin-right: 10px;
+        }
+
+        .topMargin {
+            margin-top: 10px;
+        }
+
+        img {
+            width: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+<!-- BEGIN 컨텐츠 -->
+<h1 class="mainTitle neonFont neonRed leftMargin topMargin">Beat</h1>
+<h1 class="mainTitle neonFont neonBlue rightMargin">Saber</h1>
+<br>
+<h1 class="mainTitle neonFont neonYellow leftMargin">Ranked Playlist</h1>
+
+<div id="getInfo">
+    <div class="alert alert-warning" role="alert">
+        Data Fetching. Please Wait.
+    </div>
+</div>
+
+<div id="recdate"></div>
+
+<h2 class="tekoFont rankbar">Ranked By PP</h2>
+<button type="button" class="dwnBtn btn btn-warning" id="pp_200">PP 200+</button>
+<button type="button" class="dwnBtn btn btn-success" id="pp_300">PP 300+</button>
+<button type="button" class="dwnBtn btn btn-info" id="pp_400">PP 400+</button>
+<button type="button" class="dwnBtn btn btn-danger" id="pp_500">PP 500+</button>
+
+<h2 class="tekoFont rankbar">Ranked by Star</h2>
+<button type="button" class="dwnBtn btn btn-light" id="star_00">Star 00+</button>
+<button type="button" class="dwnBtn btn btn-light" id="star_01">Star 01+</button>
+<button type="button" class="dwnBtn btn btn-secondary" id="star_02">Star 02+</button>
+<button type="button" class="dwnBtn btn btn-secondary" id="star_03">Star 03+</button>
+<button type="button" class="dwnBtn btn btn-warning" id="star_04">Star 04+</button>
+<button type="button" class="dwnBtn btn btn-warning" id="star_05">Star 05+</button>
+<button type="button" class="dwnBtn btn btn-success" id="star_06">Star 06+</button>
+<button type="button" class="dwnBtn btn btn-success" id="star_07">Star 07+</button>
+<button type="button" class="dwnBtn btn btn-info" id="star_08">Star 08+</button>
+<button type="button" class="dwnBtn btn btn-info" id="star_09">Star 09+</button>
+<button type="button" class="dwnBtn btn btn-primary" id="star_10">Star 10+</button>
+<button type="button" class="dwnBtn btn btn-primary" id="star_11">Star 11+</button>
+<button type="button" class="dwnBtn btn btn-danger" id="star_12">Star 12+</button>
+<button type="button" class="dwnBtn btn btn-danger" id="star_13">Star 13+</button>
+<button type="button" class="dwnBtn btn btn-dark" id="star_14">Star 14+</button>
+
+<h2 class="tekoFont creditbar">Credits</h2>
+    
+<ul class="creditText">
+    <li>Playlist Autogenerate by aplulu <a href="https://github.com/aplulu"><img src="https://github.com/DetegiCE/bs-ranked-playlist/blob/master/images/github.png?raw=true"></a> <a href="https://scoresaber.com/u/76561198214879119"><img src="https://github.com/DetegiCE/bs-ranked-playlist/blob/master/images/ScoreSaberLogo.svg?raw=true"></a></li>
+    <li>Download Site by SUI Sensei <a href="https://github.com/DetegiCE"><img src="https://github.com/DetegiCE/bs-ranked-playlist/blob/master/images/github.png?raw=true"></a> <a href="https://scoresaber.com/u/76561198357821968"><img src="https://github.com/DetegiCE/bs-ranked-playlist/blob/master/images/ScoreSaberLogo.svg?raw=true"></a></li>
+</ul>
+
+<!-- END 컨텐츠 -->
+</body>
+</html>
